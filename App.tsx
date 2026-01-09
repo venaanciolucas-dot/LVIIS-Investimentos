@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo, createContext, useContext, useRef } from 'react';
 import { HashRouter, Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom';
 import { 
@@ -370,7 +371,7 @@ const VerificationModal: React.FC<{
 
 const SignupScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<'form' | 'verify'>('form');
+  const location = useLocation();
   const [formData, setFormData] = useState({
     nome: '',
     sobrenome: '',
@@ -381,19 +382,9 @@ const SignupScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    setStep('verify');
+    // Navega diretamente para a seleção de contexto, pulando a verificação de SMS
+    navigate('/context' + location.search);
   };
-
-  if (step === 'verify') {
-    return (
-      <VerificationModal 
-        type="sms" 
-        target={formData.telefone} 
-        onVerify={() => navigate('/context')} 
-        onCancel={() => setStep('form')}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F5F5F7] dark:bg-black p-6 animate-in slide-in-from-bottom duration-500">
