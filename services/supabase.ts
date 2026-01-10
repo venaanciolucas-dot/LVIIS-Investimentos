@@ -9,14 +9,13 @@ const getEnv = (key: string): string => {
   }
 };
 
-const supabaseUrl = getEnv('VITE_SUPABASE_URL') || getEnv('SUPABASE_URL');
-const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY') || getEnv('SUPABASE_ANON_KEY');
+// As chaves são injetadas pelo ambiente (Vercel/Vite) conforme fornecido no briefing
+const supabaseUrl = getEnv('SUPABASE_URL') || 'https://gnlysviamgnbgeishwvh.supabase.co';
+const supabaseAnonKey = getEnv('SUPABASE_ANON_KEY') || 'sb_publishable_6b56ZzRbzeyFFtucKPBEDA_8V1LlsRf';
 
 export const isSupabaseConfigured = 
   !!supabaseUrl && 
   supabaseUrl.startsWith('https://') && 
   !supabaseUrl.includes('placeholder');
 
-export const supabase = isSupabaseConfigured 
-  ? createClient(supabaseUrl, supabaseAnonKey) 
-  : null;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

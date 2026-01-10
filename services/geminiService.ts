@@ -2,21 +2,15 @@
 import { GoogleGenAI } from "@google/genai";
 import { Asset, PortfolioStats } from '../types';
 
-// Função para acessar variáveis de ambiente de forma segura no navegador
-const getEnv = (key: string): string => {
-  try {
-    // Tenta acessar via process.env (Vercel/Node) ou via import.meta.env (Vite)
-    return (typeof process !== 'undefined' && process.env?.[key]) || '';
-  } catch {
-    return '';
-  }
-};
-
-const apiKey = getEnv('API_KEY');
-const ai = new GoogleGenAI({ apiKey });
+// Use process.env.API_KEY directly as per guidelines
+// No longer using getEnv helper to ensure compliance with exclusive API_KEY source rule
 
 export const getPortfolioInsights = async (assets: Asset[], stats: PortfolioStats): Promise<string> => {
+  const apiKey = process.env.API_KEY;
   if (!apiKey) return "Chave de API (API_KEY) não configurada no ambiente.";
+
+  // Create instance inside function to ensure latest context/key
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const prompt = `Analise esta carteira de investimentos:
@@ -32,6 +26,7 @@ export const getPortfolioInsights = async (assets: Asset[], stats: PortfolioStat
       contents: prompt,
     });
 
+    // .text is a property, correct as per latest SDK guidelines
     return response.text || "Insights temporariamente indisponíveis.";
   } catch (error) {
     console.error("Gemini Insights Error:", error);
@@ -49,7 +44,10 @@ export interface MarketData {
 }
 
 export const getAssetMarketData = async (ticker: string, category?: string): Promise<MarketData | null> => {
+  const apiKey = process.env.API_KEY;
   if (!apiKey) return null;
+
+  const ai = new GoogleGenAI({ apiKey });
 
   try {
     const prompt = `Retorne dados de mercado para o ativo ${ticker}. 
